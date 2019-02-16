@@ -7,7 +7,8 @@ import pandas as pd
 from main import main
 from _200_day_final import f2, create_ticker_data_day
 import os
-
+import threading
+from ticker_data import ticker_data
 
 def calculate_moving_averages_intra(n, date_list, df):
     y,m,d = date_list
@@ -44,7 +45,7 @@ def weight_av_intra(ticker):
         final_dict_min = {}
         final_dict_day = {}
         d = day_str.split('-')
-        print('Date: {}'.format(d))
+        #print('Date: {}'.format(d))
         for i in average_dict:
             temp = calculate_moving_averages_intra(i, d, df)
             moving_average += [temp]
@@ -64,17 +65,51 @@ def weight_av_intra(ticker):
     final_dict_total.to_csv(os.path.join(directory,file_name))
 
 
+def do_stuff(ticker):
+    weight_av_intra(ticker)
+    os.remove('tmp_final_{}.csv'.format(ticker))
+
+def loop_stuff(tickers):
+    while len(tickers) > 0:
+        if len(tickers) > 0:
+            t1 = threading.Thread(target=do_stuff, args=(tickers.pop(),))
+            t1.start()
+        if len(tickers) > 0:
+            t2 = threading.Thread(target=do_stuff, args=(tickers.pop(),))
+            t2.start()
+        if len(tickers) > 0:
+            t3 = threading.Thread(target=do_stuff, args=(tickers.pop(),))
+            t3.start()
+        if len(tickers) > 0:
+            t4 = threading.Thread(target=do_stuff, args=(tickers.pop(),))
+            t4.start()
+        if len(tickers) > 0:
+            t5 = threading.Thread(target=do_stuff, args=(tickers.pop(),))
+            t5.start()
+        if len(tickers) > 0:
+            t6 = threading.Thread(target=do_stuff, args=(tickers.pop(),))
+            t6.start()
+        if len(tickers) > 0:
+            t7 = threading.Thread(target=do_stuff, args=(tickers.pop(),))
+            t7.start()
+        if len(tickers) > 0:
+            t8 = threading.Thread(target=do_stuff, args=(tickers.pop(),))
+            t8.start()
+
+        t1.join()
+        t2.join()
+        t3.join()
+        t4.join()
+        t5.join()
+        t6.join()
+        t7.join()
+        t8.join()
+
+        print("Round Done")
 
 
-ticker = 'TSLA'
-weight_av_intra(ticker)
+tickers = ticker_data()
 
+loop_stuff(tickers)
 
-os.remove('tmp_final_{}.csv'.format(ticker))
-
-
-
-
-
-
-
+print('DONE')

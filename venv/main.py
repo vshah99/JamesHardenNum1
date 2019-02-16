@@ -26,7 +26,7 @@ def main(ticker: str):
             #df.set_index('minute', inplace=True)
             list_of_df += [df]
             end += timedelta(days=1)
-            print(end)
+
         except:
             end += timedelta(days=1)
     result = pd.concat(list_of_df, sort=False, axis=1)
