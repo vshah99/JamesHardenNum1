@@ -4,32 +4,68 @@ from iexfinance.stocks import get_historical_data
 from iexfinance.stocks import get_historical_intraday
 import matplotlib.pyplot as plt
 import pandas as pd
+from main import main
+from _200_day_final import f2, create_ticker_data_day
 
-def calculate_moving_averages_intra(n: int, y: int, m: int, d: int) -> int:
+def calculate_moving_averages_intra(n: int, date_list: list) -> int:
     df = pd.read_csv('final.csv')
+    y,m,d = date_list
     generic_date = "{}-{}-{}"
-    date = generic_date.format(y,m,d)
+    date = generic_date.format(y, m, d)
     sum = 0
     num = 0
+    #print(df[date])
     for i in range(n):
         sum += df[date][389-i]
         num += 1
     return float(sum)/num
 
+def weight_av_intra(ticker: str):
+    main(ticker)
+    moving_average = []
+    average_dict = {1: '1 min', 5: '5 min', 10 : '10 min', 15 : '15 min', 20 : '20 min', 25 : '25 min',
+                    30: '30 min', 45 : '45 min', 50 : '50 min', 55 : '55 min', 60 : '1 hr',
+                    90: '1.5 hr', 120: '2 hr', 150: '2.5 hr', 180: '3 hr', 210: '3.5 hr',
+                    240: '4 hr', 270: '4.5 hr', 300: '5 hr', 330: '5.5 hr', 360: '6 hr',
+                    390: '6.5 hr'}
 
-moving_average = []
 
-average_dict = {1: '1 min', 5: '5 min', 10 : '10 min', 15 : '15 min', 20 : '20 min', 25 : '25 min',
-                30: '30 min', 45 : '45 min', 50 : '50 min', 55 : '55 min', 60 : '1 hr',
-                90: '1.5 hr', 120: '2 hr', 150: '2.5 hr', 180: '3 hr', 210: '3.5 hr',
-                240: '4 hr', 270: '4.5 hr', 300: '5 hr', 330: '5.5 hr', 360: '6 hr',
-                390: '6.5 hr'}
+    god_data = {}
+    df = pd.read_csv('final.csv')
+    good = []
+    for col in df:
+        if 0 not in df[col].values.tolist() and not \
+                df[col].isnull().values.any():
+            good += [col]
 
-for i in average_dict:
-    temp = calculate_moving_averages_intra(i, 2018, 12 ,12)
-    moving_average += [temp]
-    gen_str = "{} moving average: {}"
-    print(gen_str.format(average_dict[i], temp))
+    create_ticker_data_day(ticker)
+    for d in good[1:]:
+        day_str = d
+        final_dict_min = {}
+        final_dict_day = {}
+        d = d.split('-')
+        print('Date: {}'.format(d))
+        for i in average_dict:
+            temp = calculate_moving_averages_intra(i, d)
+            moving_average += [temp]
+            gen_str = "{} moving average: {}"
+            #print(gen_str.format(average_dict[i], temp))
+            final_dict_min[average_dict[i]] = temp
+        final_dict_day = f2(ticker, d)
 
-#plt.plot(moving_average)
-#plt.show()
+        data = final_dict_min
+        data.update(final_dict_day)
+
+        god_data[day_str] = data
+
+    final_dict_total = pd.DataFrame.from_dict(god_data)
+
+    file_name = '{}.csv'.format(ticker)
+    final_dict_total.to_csv(file_name)
+
+
+weight_av_intra('AMZN')
+
+
+
+
