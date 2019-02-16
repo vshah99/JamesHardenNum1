@@ -13,7 +13,8 @@ drop_list = ['average', 'changeOverTime', 'date', 'high', 'label', 'low', 'close
 
 list_of_df = []
 i = 0
-while (end != datetime.today()):
+present = datetime.now()
+while (end <= present):
     try:
         df = get_historical_intraday("GOOG", end, output_format = 'pandas')
         df.drop(drop_list, axis=1, inplace = True)
@@ -23,6 +24,7 @@ while (end != datetime.today()):
         df.set_index('minute', inplace=True)
         list_of_df += [df]
         end += timedelta(days=1)
+        print(end)
     except:
         end += timedelta(days=1)
 
