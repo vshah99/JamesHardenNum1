@@ -7,7 +7,7 @@ import pandas as pd
 from main import main
 from _200_day_final import f2, create_ticker_data_day
 
-def calculate_moving_averages_intra(n: int, date_list: list) -> int:
+def calculate_moving_averages_intra(n, date_list):
     df = pd.read_csv('final.csv')
     y,m,d = date_list
     generic_date = "{}-{}-{}"
@@ -20,7 +20,7 @@ def calculate_moving_averages_intra(n: int, date_list: list) -> int:
         num += 1
     return float(sum)/num
 
-def weight_av_intra(ticker: str):
+def weight_av_intra(ticker):
     main(ticker)
     moving_average = []
     average_dict = {1: '1 min', 5: '5 min', 10 : '10 min', 15 : '15 min', 20 : '20 min', 25 : '25 min',
