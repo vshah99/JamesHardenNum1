@@ -16,8 +16,8 @@ from datetime import timedelta
 # df.drop(drop_list,axis=1,inplace=True)
 # df.to_csv('goog.csv')
 
-def calculate_moving_averages_day(n: int, y: int, m: int, d: int) -> int:
-    df = pd.read_csv('tmp_final.csv')
+def calculate_moving_averages_day(n: int, y: int, m: int, d: int, ticker) -> int:
+    df = pd.read_csv('tmp_final_{}.csv'.format(ticker))
     #df.drop('date',axis =1, inplace =True)
     #df.set_index("date", inplace = True)
     curr=datetime(y,m,d)

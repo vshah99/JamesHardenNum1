@@ -7,8 +7,8 @@ import pandas as pd
 from main import main
 from _200_day_final import f2, create_ticker_data_day
 
-def calculate_moving_averages_intra(n, date_list):
-    df = pd.read_csv('final.csv')
+
+def calculate_moving_averages_intra(n, date_list, df):
     y,m,d = date_list
     generic_date = "{}-{}-{}"
     date = generic_date.format(y, m, d)
@@ -21,7 +21,7 @@ def calculate_moving_averages_intra(n, date_list):
     return float(sum)/num
 
 def weight_av_intra(ticker):
-    main(ticker)
+    df = main(ticker)
     moving_average = []
     average_dict = {1: '1 min', 5: '5 min', 10 : '10 min', 15 : '15 min', 20 : '20 min', 25 : '25 min',
                     30: '30 min', 45 : '45 min', 50 : '50 min', 55 : '55 min', 60 : '1 hr',
@@ -29,9 +29,8 @@ def weight_av_intra(ticker):
                     240: '4 hr', 270: '4.5 hr', 300: '5 hr', 330: '5.5 hr', 360: '6 hr',
                     390: '6.5 hr'}
 
-
     god_data = {}
-    df = pd.read_csv('final.csv')
+
     good = []
     for col in df:
         if 0 not in df[col].values.tolist() and not \
@@ -40,13 +39,13 @@ def weight_av_intra(ticker):
 
     create_ticker_data_day(ticker)
     for d in good[1:]:
-        day_str = d
+        day_str = d.strftime("%Y-%m-%d")
         final_dict_min = {}
         final_dict_day = {}
-        d = d.split('-')
+        d = day_str.split('-')
         print('Date: {}'.format(d))
         for i in average_dict:
-            temp = calculate_moving_averages_intra(i, d)
+            temp = calculate_moving_averages_intra(i, d, df)
             moving_average += [temp]
             gen_str = "{} moving average: {}"
             #print(gen_str.format(average_dict[i], temp))

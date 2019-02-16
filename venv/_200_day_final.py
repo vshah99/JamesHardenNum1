@@ -14,7 +14,7 @@ def create_ticker_data_day(ticker: str):
     df = get_historical_data(ticker, start, end, output_format='pandas')
     drop_list = ['open', 'high', 'low', 'volume']
     df.drop(drop_list, axis=1, inplace=True)
-    df.to_csv('tmp_final.csv')
+    df.to_csv('tmp_final_{}.csv'.format(ticker))
 
 def f2(ticker: str, date: list) -> dict:
     y, m, d = date
@@ -28,9 +28,8 @@ def f2(ticker: str, date: list) -> dict:
     final_dict_day = {}
 
     for i in days_dict:
-        tmp = calculate_moving_averages_day(i, y, m, d)
+        tmp = calculate_moving_averages_day(i, y, m, d, ticker)
         gen_str = "{} moving avg: {}"
         #print(gen_str.format(days_dict[i], tmp))
         final_dict_day[days_dict[i]] = tmp
     return (final_dict_day)
-
