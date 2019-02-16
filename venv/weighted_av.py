@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from main import main
 from _200_day_final import f2, create_ticker_data_day
+import os
 
 
 def calculate_moving_averages_intra(n, date_list, df):
@@ -58,12 +59,20 @@ def weight_av_intra(ticker):
         god_data[day_str] = data
 
     final_dict_total = pd.DataFrame.from_dict(god_data)
-
+    directory = './ticker_data'
     file_name = '{}.csv'.format(ticker)
-    final_dict_total.to_csv(file_name)
+    final_dict_total.to_csv(os.path.join(directory,file_name))
 
 
-weight_av_intra('TSLA')
+
+
+ticker = 'TSLA'
+weight_av_intra(ticker)
+
+
+os.remove('tmp_final_{}.csv'.format(ticker))
+
+
 
 
 
