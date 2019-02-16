@@ -66,6 +66,7 @@ def weight_av_intra(ticker):
 
 #if __name__ == 'main':
 weight_av_intra('AMZN')
+print('test')
 
 
 
