@@ -64,7 +64,8 @@ def weight_av_intra(ticker: str):
     final_dict_total.to_csv(file_name)
 
 
-weight_av_intra('AMZN')
+if __name__ == 'main':
+    weight_av_intra('AMZN')
 
 
 
