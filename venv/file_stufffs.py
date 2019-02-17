@@ -10,9 +10,15 @@ def load_data_wrapper():
     allFiles = glob.glob(os.path.join('/Users/vedantshah/PycharmProjects/JamesHardenNo1/venv/ticker_data/',"*.csv"))
 
     dataframes = []
+    i = 0
     for file_ in allFiles:
-        df = pd.read_csv(file_,index_col=0, header=0)
-        dataframes += [df]
+        print(i)
+        i += 1
+        try:
+            df = pd.read_csv(file_,index_col=0, header=0)
+            dataframes += [df]
+        except:
+            pass
 
 
     final = pd.concat(dataframes, axis=1, sort=True)
