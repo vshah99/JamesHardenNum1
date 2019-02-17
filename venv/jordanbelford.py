@@ -13,6 +13,7 @@ print("Eager execution: {}".format(tf.executing_eagerly()))
 
 
 train_dataset_fp = 'TEST.csv'
+test_fp = 'TESTTEST.csv'
 
 col_names = ['1 hr','1 min','1.5 hr','10 day','10 min','100 day','125 day','15 min','150 day','175 day','2 day','2 hr','2.5 hr','20 day','20 min','200 day','25 min','3 hr','3.5 hr','30 day','30 min','4 hr','4.5 hr','40 day','45 min','5 day','5 hr','5 min','5.5 hr','50 day','50 min','55 min','6 hr','6.5 hr',
 '60 day','70 day','80 day','90 day', 'Change']
@@ -21,7 +22,7 @@ lab_names = col_names[-1]
 feat_names = col_names[:-1]
 class_names = ['DOWN', 'UP']
 
-batch_size = 5
+batch_size = 25
 train_dataset = tf.data.experimental.make_csv_dataset(
     train_dataset_fp,
     batch_size,
@@ -29,6 +30,14 @@ train_dataset = tf.data.experimental.make_csv_dataset(
     label_name=lab_names,
     num_epochs=1
     )
+
+test_dataset = tf.data.experimental.make_csv_dataset(
+    test_fp,
+    batch_size,
+    column_names=col_names,
+    label_name=lab_names,
+    num_epochs=1,
+    shuffle=False)
 
 features, labels = next(iter(train_dataset))
 
@@ -50,6 +59,8 @@ def pack_features_vector(features, labels):
 
 train_dataset = train_dataset.map(pack_features_vector)
 features, labels = next(iter(train_dataset))
+
+test_dataset = test_dataset.map(pack_features_vector)
 
 #print(features[:5])
 
@@ -78,7 +89,7 @@ def grad(model, inputs, targets):
         loss_value = loss(model, inputs, targets)
     return loss_value, tape.gradient(loss_value, model.trainable_variables)
 
-optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.01)
+optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.1)
 
 global_step = tf.Variable(0)
 
@@ -105,7 +116,7 @@ tfe = contrib.eager
 train_loss_results = []
 train_accuracy_results = []
 
-num_epochs = 201
+num_epochs = 5
 
 for epoch in range(num_epochs):
     epoch_loss_avg = tfe.metrics.Mean()
@@ -127,8 +138,18 @@ for epoch in range(num_epochs):
     train_loss_results.append(epoch_loss_avg.result())
     train_accuracy_results.append(epoch_accuracy.result())
 
+
+
     print(epoch)
-    if epoch % 50 == 0:
+    if epoch % 1 == 0:
         print("Epoch {:03d}: Loss: {:.3f}, Accuracy: {:.3%}".format(epoch,
                                                                     epoch_loss_avg.result(),
                                                                     epoch_accuracy.result()))
+
+test_accuracy = tfe.metrics.Accuracy()
+
+for (x, y) in test_dataset:
+    logits = model(x)
+    prediction = tf.argmax(logits, axis=1, output_type=tf.int32)
+    test_accuracy(prediction, y)
+    print("Test set accuracy: {:.3%}".format(test_accuracy.result()))
