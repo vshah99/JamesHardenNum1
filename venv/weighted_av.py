@@ -108,10 +108,9 @@ def loop_stuff(tickers):
         print("Round Done")
 
 
-#tickers = ticker_data()
+tickers = ticker_data()
+ticker = tickers[:12]
+loop_stuff(tickers)
 
-#loop_stuff(tickers)
+print('DONE')
 
-#print('DONE')
-
-weight_av_intra('FOX')
