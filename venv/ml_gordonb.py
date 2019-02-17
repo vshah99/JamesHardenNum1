@@ -1,7 +1,12 @@
 import random
+from file_stufffs import load_data_wrapper
+import numpy as np
+import sys
+
+sys.path.append('../')
 
 # Third-party libraries
-import numpy as np
+
 
 class Network(object):
 
@@ -40,18 +45,18 @@ class Network(object):
         tracking progress, but slows things down substantially."""
         if test_data: n_test = len(test_data)
         n = len(training_data)
-        for j in xrange(epochs):
+        for j in range(epochs):
             random.shuffle(training_data)
             mini_batches = [
                 training_data[k:k+mini_batch_size]
-                for k in xrange(0, n, mini_batch_size)]
+                for k in range(0, n, mini_batch_size)]
             for mini_batch in mini_batches:
                 self.update_mini_batch(mini_batch, eta)
             if test_data:
-                print "Epoch {0}: {1} / {2}".format(
-                    j, self.evaluate(test_data), n_test)
+                print("Epoch {0}: {1} / {2}".format(
+                    j, self.evaluate(test_data), n_test))
             else:
-                print "Epoch {0} complete".format(j)
+                print("Epoch {0} complete".format(j))
 
     def update_mini_batch(self, mini_batch, eta):
         """Update the network's weights and biases by applying
@@ -96,7 +101,7 @@ class Network(object):
         # second-last layer, and so on.  It's a renumbering of the
         # scheme in the book, used here to take advantage of the fact
         # that Python can use negative indices in lists.
-        for l in xrange(2, self.num_layers):
+        for l in range(2, self.num_layers):
             z = zs[-l]
             sp = sigmoid_prime(z)
             delta = np.dot(self.weights[-l+1].transpose(), delta) * sp
@@ -116,7 +121,15 @@ class Network(object):
     def cost_derivative(self, output_activations, y):
         """Return the vector of partial derivatives \partial C_x /
         \partial a for the output activations."""
-        return (output_activations-y)
+        #return (output_activations[0] - y, output_activations[1] - y)
+        print(output_activations)
+        print(y)
+        l = []
+        for i in range(len(output_activations)):
+            print(output_activations[i])
+            print(y[i])
+            l += [output_activations[i] - y[i]]
+        return np.array(l)
 
 #### Miscellaneous functions
 def sigmoid(z):
@@ -126,3 +139,8 @@ def sigmoid(z):
 def sigmoid_prime(z):
     """Derivative of the sigmoid function."""
     return sigmoid(z)*(1-sigmoid(z))
+
+training_data, validation_data, test_data = load_data_wrapper()
+
+net = Network([39, 8, 2])
+net.SGD(training_data, 10, 10, 1, test_data=test_data)
