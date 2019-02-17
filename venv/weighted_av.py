@@ -34,7 +34,7 @@ def weight_av_intra(ticker):
     god_data = {}
 
     good = []
-    for col in df:
+    for col in df[:-1]:
         if 0 not in df[col].values.tolist() and not \
                 df[col].isnull().values.any():
             good += [col]
@@ -108,8 +108,10 @@ def loop_stuff(tickers):
         print("Round Done")
 
 
-tickers = ticker_data()
+#tickers = ticker_data()
 
-loop_stuff(tickers)
+#loop_stuff(tickers)
 
-print('DONE')
+#print('DONE')
+
+weight_av_intra('FOX')

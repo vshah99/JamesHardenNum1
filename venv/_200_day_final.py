@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-
+import os
 
 from iexfinance.stocks import get_historical_data
 from datetime import datetime
@@ -32,4 +32,17 @@ def f2(ticker: str, date: list) -> dict:
         gen_str = "{} moving avg: {}"
         #print(gen_str.format(days_dict[i], tmp))
         final_dict_day[days_dict[i]] = tmp
+
+
+    df = pd.read_csv('tmp_final_{}.csv'.format(ticker))
+    curr = datetime(y, m, d)
+    final = df.index[df.date == curr.strftime("%Y-%m-%d")]
+    try:
+        final_dict_day['Tomorrow'] = (df['close'].values[final + 1])[0]
+    except:
+        final_dict_day['Tomorrow'] = 'NULL'
+        os.remove('tmp_final_{}.csv'.format(ticker))
+
     return (final_dict_day)
+
+
